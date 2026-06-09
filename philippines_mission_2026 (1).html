@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>2026 미라클 영어마을 필리핀 선교</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A1628;--deep:#1A2E50;--royal:#1B4FBF;
+  --gold:#D4A944;--gold-l:#F0C96A;
+  --white:#fff;--light:#8A9AB8;--green:#2D7A4F;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--navy);color:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+#mainPage{display:block;}
+#detailPage{display:none;}
+
+/* ═══════════════════════════════
+   날씨 패널 — 가족여행 카드 스타일
+═══════════════════════════════ */
+#weatherPanel{
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  padding:14px 16px 12px;
+}
+
+/* 팀명 라인 */
+.wp-team{
+  text-align:center;
+  font-size:13px;font-weight:600;color:rgba(255,255,255,0.55);
+  letter-spacing:1px;margin-bottom:12px;
+}
+.wp-team strong{color:rgba(255,255,255,0.85);}
+
+/* 도시 카드 3개 가로 */
+.wp-cities{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;margin-bottom:12px;
+}
+.wp-city-card{
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:14px;padding:12px 10px;
+  display:flex;align-items:center;gap:10px;
+}
+.wp-city-icon{font-size:26px;line-height:1;flex-shrink:0;}
+.wp-city-info{}
+.wp-city-name{font-size:11px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:2px;}
+.wp-city-temp{
+  font-family:'Montserrat',sans-serif;
+  font-size:22px;font-weight:800;color:var(--white);line-height:1;
+}
+
+/* 7일 예보 */
+.wp-week{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;padding:12px 14px;
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
+.wp-day{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.wp-day-name{font-size:10px;color:rgba(255,255,255,0.4);font-weight:600;}
+.wp-day-icon{font-size:18px;line-height:1;}
+.wp-day-hi{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--white);}
+.wp-day-lo{font-size:10px;color:rgba(255,255,255,0.35);}
+
+/* ═══════════════════════════════
+   HERO
+═══════════════════════════════ */
+.hero{
+  min-height:100svh;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:70px 24px 100px;text-align:center;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background-image:url('/mnt/user-data/uploads/AdobeStock_816531711.jpeg');
+  background-size:cover;background-position:center top;
+  filter:brightness(0.52) saturate(1.1);
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,
+    rgba(0,56,168,0.42) 0%,
+    rgba(10,22,40,0.2) 45%,
+    rgba(206,17,38,0.28) 75%,
+    rgba(10,22,40,0.92) 100%);
+}
+.hero-light{
+  position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(255,215,0,0.13) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hero-content{position:relative;z-index:2;width:100%;max-width:480px;}
+.hero-cross{font-size:32px;margin-bottom:14px;filter:drop-shadow(0 0 16px rgba(255,215,0,0.7));display:block;}
+.hero-badge{
+  display:inline-block;
+  background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.35);
+  color:#FFD700;font-family:'Montserrat',sans-serif;
+  font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;
+  padding:6px 18px;border-radius:50px;margin-bottom:22px;
+}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(32px,9vw,62px);font-weight:900;line-height:1.1;text-shadow:0 2px 20px rgba(0,0,0,0.5);}
+.hero-title .ko{color:var(--white);display:block;}
+.hero-title .en{color:#FFD700;font-style:italic;display:block;font-size:0.55em;margin-top:6px;}
+.hero-verse{font-size:12px;color:rgba(255,255,255,0.5);font-style:italic;letter-spacing:1px;margin:10px 0 36px;font-family:'Montserrat',sans-serif;}
+
+.dday-wrap{margin-bottom:32px;}
+.dday-lbl{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:4px;color:rgba(255,255,255,0.45);text-transform:uppercase;margin-bottom:10px;}
+.dday-box{
+  display:inline-flex;align-items:baseline;gap:3px;
+  background:linear-gradient(135deg,#D4A944,#F0C96A);color:var(--navy);
+  font-family:'Playfair Display',serif;font-size:clamp(58px,18vw,100px);font-weight:900;line-height:1;
+  padding:16px 44px;border-radius:22px;
+  box-shadow:0 20px 60px rgba(212,169,68,0.45),0 0 0 1px rgba(255,255,255,0.1);
+}
+.dday-box .pfx{font-size:0.38em;font-weight:800;opacity:0.65;margin-bottom:8px;align-self:flex-end;}
+.dday-date{margin-top:12px;font-size:13px;color:rgba(255,255,255,0.45);font-family:'Montserrat',sans-serif;}
+.dday-date strong{color:#FFD700;}
+
+.countdown{display:flex;gap:10px;justify-content:center;margin-bottom:36px;}
+.cnt-box{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:10px 14px;text-align:center;min-width:62px;}
+.cnt-n{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:var(--white);display:block;line-height:1;}
+.cnt-l{font-size:10px;color:var(--light);margin-top:3px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+
+.enter-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,rgba(0,56,168,0.9),rgba(27,79,191,0.95));
+  border:1px solid rgba(255,255,255,0.15);color:var(--white);border-radius:50px;
+  font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;
+  padding:16px 44px;cursor:pointer;box-shadow:0 12px 40px rgba(0,56,168,0.5);transition:all 0.3s;
+}
+.enter-btn:active{transform:scale(0.97);}
+.scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0.35;animation:bob 2s infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(7px);}}
+
+/* ═══════════════════════════════
+   DETAIL PAGE
+═══════════════════════════════ */
+#detailPage{background:var(--navy);min-height:100svh;}
+.back-btn{
+  position:sticky;top:0;z-index:200;
+  background:rgba(10,22,40,0.94);backdrop-filter:blur(10px);
+  border:none;border-bottom:1px solid rgba(255,255,255,0.06);
+  color:var(--white);font-family:'Noto Sans KR',sans-serif;
+  font-size:14px;font-weight:600;padding:14px 20px;width:100%;
+  text-align:left;cursor:pointer;display:flex;align-items:center;gap:8px;
+}
+
+/* ── 2줄 탭 네비 ── */
+.tab-nav-wrap{
+  position:sticky;top:49px;z-index:190;
+  background:rgba(10,22,40,0.97);backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+
+/* 1행: DAY 탭 — 가족여행 스타일 큰 버튼 */
+.tab-row1{
+  display:flex;gap:8px;padding:10px 12px 0;
+  overflow-x:auto;scrollbar-width:none;
+}
+.tab-row1::-webkit-scrollbar{display:none;}
+.day-tab-btn{
+  flex-shrink:0;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:16px;padding:8px 16px;
+  text-align:center;cursor:pointer;transition:all 0.2s;
+  min-width:72px;
+}
+.day-tab-btn.active{
+  background:linear-gradient(135deg,#E8548A,#F07BB0);
+  border-color:transparent;
+  box-shadow:0 4px 16px rgba(232,84,138,0.4);
+}
+.day-tab-btn .dt-label{
+  font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;
+  color:rgba(255,255,255,0.6);display:block;line-height:1;
+}
+.day-tab-btn.active .dt-label{color:var(--white);}
+.day-tab-btn .dt-date{font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);margin-top:3px;display:block;}
+.day-tab-btn.active .dt-date{color:rgba(255,255,255,0.9);}
+
+/* 2행: 서브 탭 — 작은 아이콘+텍스트 */
+.tab-row2{
+  display:flex;gap:6px;padding:8px 12px 10px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.tab-row2::-webkit-scrollbar{display:none;}
+.sub-tab-btn{
+  flex-shrink:0;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;padding:6px 12px;
+  display:flex;align-items:center;gap:5px;
+  font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:600;
+  color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;white-space:nowrap;
+}
+.sub-tab-btn.active{
+  background:rgba(212,169,68,0.18);
+  border-color:rgba(212,169,68,0.4);
+  color:var(--gold-l);
+}
+.sub-tab-btn .st-icon{font-size:14px;}
+
+/* ── 탭 컨텐츠 ── */
+.tab-content{display:none;padding:24px 16px;animation:fadeUp 0.3s ease;max-width:600px;margin:0 auto;}
+.tab-content.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+.sec-ey{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;text-align:center;}
+.sec-t{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:20px;text-align:center;}
+
+/* 일정 */
+.sch-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.sch-time{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gold);min-width:52px;padding-top:2px;flex-shrink:0;}
+.sch-dot{width:8px;height:8px;border-radius:50%;background:var(--royal);border:2px solid var(--gold);margin-top:5px;flex-shrink:0;}
+.sch-title{font-size:14px;font-weight:600;color:var(--white);margin-bottom:3px;}
+.sch-sub{font-size:12px;color:var(--light);line-height:1.5;}
+.note-box{background:rgba(212,169,68,0.08);border-left:3px solid var(--gold);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--light);margin-top:12px;line-height:1.6;}
+
+/* 명단 */
+.member-group{margin-bottom:24px;}
+.group-title{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
+.member-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 14px;text-align:center;}
+.member-name{font-size:14px;font-weight:700;color:var(--white);}
+.member-role{font-size:11px;color:var(--light);margin-top:3px;}
+.member-note{font-size:11px;color:var(--gold);margin-top:4px;}
+
+/* 목적 */
+.purpose-hero{background:linear-gradient(135deg,rgba(0,56,168,0.25),rgba(206,17,38,0.15));border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:28px;margin-bottom:20px;text-align:center;position:relative;overflow:hidden;}
+.purpose-hero::before{content:'✝';position:absolute;font-size:120px;color:rgba(255,255,255,0.04);right:10px;bottom:-20px;}
+.purpose-verse{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:rgba(255,255,255,0.88);line-height:1.7;margin-bottom:10px;}
+.purpose-ref{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--gold);}
+.purpose-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;}
+.pi-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+.pi-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.pi-desc{font-size:13px;color:var(--light);line-height:1.6;}
+
+/* 지역·교회 */
+.dest-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:16px;}
+.dest-img-ph{width:100%;height:110px;background:linear-gradient(135deg,var(--deep),var(--royal));display:flex;align-items:center;justify-content:center;font-size:40px;}
+.dest-body{padding:16px;}
+.dest-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--white);margin-bottom:6px;}
+.dest-desc{font-size:13px;color:var(--light);line-height:1.6;}
+.dest-tag{display:inline-block;background:rgba(27,79,191,0.2);border:1px solid rgba(27,79,191,0.3);color:#7BA3F5;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-top:8px;}
+
+/* 항공·숙소 */
+.info-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;margin-bottom:16px;}
+.info-card-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.info-row-line{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.info-row-line:last-child{border-bottom:none;}
+.info-key{font-size:12px;color:var(--light);}
+.info-val{font-size:13px;font-weight:600;color:var(--white);text-align:right;}
+.info-val.gold{color:var(--gold);}
+.tbd{display:inline-block;background:rgba(212,169,68,0.1);border:1px solid rgba(212,169,68,0.3);color:var(--gold);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+
+/* 준비물 */
+.progress-bar{background:rgba(255,255,255,0.08);border-radius:10px;height:6px;margin-bottom:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--royal),var(--gold));border-radius:10px;transition:width 0.4s;}
+.progress-txt{font-size:12px;color:var(--light);text-align:right;margin-bottom:16px;}
+.check-sec-title{font-size:12px;font-weight:700;color:var(--white);margin:16px 0 8px;padding:8px 12px;background:rgba(255,255,255,0.04);border-radius:10px;display:flex;align-items:center;gap:8px;}
+.check-list{list-style:none;}
+.check-item{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;}
+.check-box{width:20px;height:20px;border-radius:5px;border:1.5px solid rgba(212,169,68,0.4);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all 0.2s;}
+.check-box.on{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.check-txt{font-size:14px;color:rgba(255,255,255,0.75);}
+.check-item.done .check-txt{color:rgba(255,255,255,0.3);text-decoration:line-through;}
+
+/* 회화 */
+.phrase-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;justify-content:center;}
+.ptab{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:var(--light);cursor:pointer;transition:all 0.2s;}
+.ptab.active{background:var(--green);border-color:var(--green);color:var(--white);}
+.phrase-panel{display:none;}
+.phrase-panel.active{display:block;animation:fadeUp 0.25s ease;}
+.phrase-cat-title{font-size:11px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.phrase-item{padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;margin-bottom:8px;}
+.phrase-ko{font-size:12px;color:var(--light);margin-bottom:4px;}
+.phrase-foreign{font-size:15px;font-weight:700;color:var(--white);}
+.phrase-pron{font-size:12px;color:var(--gold);margin-top:3px;font-style:italic;}
+
+/* 환율 */
+.fx-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;margin-bottom:16px;}
+.fx-rate-box{text-align:center;padding:18px;background:rgba(27,79,191,0.1);border-radius:12px;margin-bottom:16px;}
+.fx-rate-num{font-family:'Montserrat',sans-serif;font-size:26px;font-weight:800;color:var(--gold);}
+.fx-rate-sub{font-size:12px;color:var(--light);margin-top:4px;}
+.fx-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--white);font-size:16px;font-weight:600;padding:12px 14px;width:100%;font-family:'Noto Sans KR',sans-serif;outline:none;margin-bottom:8px;}
+.fx-input:focus{border-color:var(--gold);}
+.fx-dir{font-size:11px;color:var(--light);margin-bottom:6px;font-weight:600;}
+.fx-arrow{text-align:center;margin:8px 0;font-size:18px;color:var(--gold);}
+.fx-result{background:rgba(212,169,68,0.1);border:1px solid rgba(212,169,68,0.2);border-radius:10px;padding:14px;text-align:center;margin-bottom:16px;}
+.fx-result-num{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:#F0C96A;}
+.fx-result-lbl{font-size:11px;color:var(--light);margin-top:3px;}
+.fx-quick{display:flex;gap:8px;flex-wrap:wrap;}
+.fx-q-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--light);cursor:pointer;transition:all 0.2s;}
+.fx-q-btn:active{background:rgba(212,169,68,0.15);color:var(--gold);}
+.fx-note{font-size:11px;color:var(--light);text-align:center;margin-top:10px;}
+
+/* 기도 */
+.prayer-card{background:linear-gradient(135deg,rgba(27,79,191,0.2),rgba(45,122,79,0.15));border:1px solid rgba(27,79,191,0.3);border-radius:20px;padding:26px;margin-bottom:16px;text-align:center;position:relative;overflow:hidden;}
+.prayer-card::before{content:'🙏';position:absolute;font-size:80px;opacity:0.05;right:10px;bottom:-10px;}
+.prayer-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;}
+.pr-num{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;color:var(--gold);min-width:22px;padding-top:1px;}
+.pr-text{font-size:13px;color:rgba(255,255,255,0.82);line-height:1.6;}
+
+.detail-footer{padding:28px 16px calc(28px + var(--safe-bot));text-align:center;border-top:1px solid rgba(255,255,255,0.05);}
+.detail-footer p{font-size:12px;color:var(--light);}
+.detail-footer strong{color:var(--gold);}
+
+@media(max-width:380px){
+  .dday-box{font-size:52px;padding:14px 28px;}
+  .cnt-n{font-size:18px;}
+  .wp-city-temp{font-size:18px;}
+  .day-tab-btn{min-width:60px;padding:7px 10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ 날씨 패널 (항상 상단 고정) ═══ -->
+<div id="weatherPanel">
+  <div class="wp-team">
+    <strong>2026 미라클 영어마을</strong> · 필리핀 선교팀
+  </div>
+  <!-- 3개 도시 카드 -->
+  <div class="wp-cities">
+    <div class="wp-city-card">
+      <span class="wp-city-icon" id="wci1">☀️</span>
+      <div class="wp-city-info">
+        <div class="wp-city-name">선교지</div>
+        <div class="wp-city-temp" id="wct1">--°</div>
+      </div>
+    </div>
+    <div class="wp-city-card">
+      <span class="wp-city-icon" id="wci2">🌤</span>
+      <div class="wp-city-info">
+        <div class="wp-city-name">마닐라</div>
+        <div class="wp-city-temp" id="wct2">--°</div>
+      </div>
+    </div>
+    <div class="wp-city-card">
+      <span class="wp-city-icon" id="wci3">🌦</span>
+      <div class="wp-city-info">
+        <div class="wp-city-name">서울</div>
+        <div class="wp-city-temp" id="wct3">--°</div>
+      </div>
+    </div>
+  </div>
+  <!-- 7일 예보 -->
+  <div class="wp-week" id="wpWeek">
+    <div class="wp-day"><span class="wp-day-name">—</span><span class="wp-day-icon">⏳</span><span class="wp-day-hi">--°</span><span class="wp-day-lo">--°</span></div>
+    <div class="wp-day"><span class="wp-day-name">—</span><span class="wp-day-icon">⏳</span><span class="wp-day-hi">--°</span><span class="wp-day-lo">--°</span></div>
+    <div class="wp-day"><span class="wp-day-name">—</span><span class="wp-day-icon">⏳</span><span class="wp-day-hi">--°</span><span class="wp-day-lo">--°</span></div>
+    <div class="wp-day"><span class="wp-day-name">—</span><span class="wp-day-icon">⏳</span><span class="wp-day-hi">--°</span><span class="wp-day-lo">--°</span></div>
+    <div class="wp-day"><span class="wp-day-name">—</span><span class="wp-day-icon">⏳</span><span class="wp-day-hi">--°</span><span class="wp-day-lo">--°</span></div>
+    <div class="wp-day"><span class="wp-day-name">—</span><span class="wp-day-icon">⏳</span><span class="wp-day-hi">--°</span><span class="wp-day-lo">--°</span></div>
+    <div class="wp-day"><span class="wp-day-name">—</span><span class="wp-day-icon">⏳</span><span class="wp-day-hi">--°</span><span class="wp-day-lo">--°</span></div>
+  </div>
+</div>
+
+<!-- ═══ MAIN PAGE ═══ -->
+<div id="mainPage">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-light"></div>
+    <div class="hero-content">
+      <span class="hero-cross">✝</span>
+      <div class="hero-badge">MISSION 2026 · PHILIPPINES</div>
+      <h1 class="hero-title">
+        <span class="ko">미라클 영어마을<br>필리핀 선교</span>
+        <span class="en">Boldly and without hindrance</span>
+      </h1>
+      <p class="hero-verse">"사도행전 28:31 · Acts 28:31"</p>
+      <div class="dday-wrap">
+        <div class="dday-lbl">출발까지</div>
+        <div class="dday-box">
+          <span class="pfx">D-</span><span id="ddayNum">--</span>
+        </div>
+        <div class="dday-date">출발 <strong>2026. 7. 31(금)</strong> — 귀국 <strong>8. 4(화)</strong></div>
+      </div>
+      <div class="countdown">
+        <div class="cnt-box"><span class="cnt-n" id="cntD">--</span><span class="cnt-l">Days</span></div>
+        <div class="cnt-box"><span class="cnt-n" id="cntH">--</span><span class="cnt-l">Hrs</span></div>
+        <div class="cnt-box"><span class="cnt-n" id="cntM">--</span><span class="cnt-l">Min</span></div>
+        <div class="cnt-box"><span class="cnt-n" id="cntS">--</span><span class="cnt-l">Sec</span></div>
+      </div>
+      <button class="enter-btn" onclick="gotoDetail()">✈️ &nbsp;선교지로 출발!</button>
+    </div>
+    <div class="scroll-hint">
+      <span style="font-size:9px;letter-spacing:2px;text-transform:uppercase;">scroll</span>
+      <span style="font-size:18px;">↓</span>
+    </div>
+  </section>
+</div>
+
+<!-- ═══ DETAIL PAGE ═══ -->
+<div id="detailPage">
+  <button class="back-btn" onclick="goBack()">← 메인으로</button>
+
+  <!-- 2줄 탭 네비 -->
+  <div class="tab-nav-wrap">
+    <!-- 1행: DAY 1~5 -->
+    <div class="tab-row1">
+      <div class="day-tab-btn active" onclick="showDayTab('day1',this)">
+        <span class="dt-label">DAY 1</span><span class="dt-date">7/31</span>
+      </div>
+      <div class="day-tab-btn" onclick="showDayTab('day2',this)">
+        <span class="dt-label">DAY 2</span><span class="dt-date">8/1</span>
+      </div>
+      <div class="day-tab-btn" onclick="showDayTab('day3',this)">
+        <span class="dt-label">DAY 3</span><span class="dt-date">8/2</span>
+      </div>
+      <div class="day-tab-btn" onclick="showDayTab('day4',this)">
+        <span class="dt-label">DAY 4</span><span class="dt-date">8/3</span>
+      </div>
+      <div class="day-tab-btn" onclick="showDayTab('day5',this)">
+        <span class="dt-label">DAY 5</span><span class="dt-date">8/4</span>
+      </div>
+    </div>
+    <!-- 2행: 서브 탭 -->
+    <div class="tab-row2">
+      <button class="sub-tab-btn" onclick="showSubTab('purpose',this)"><span class="st-icon">🎯</span>목적</button>
+      <button class="sub-tab-btn" onclick="showSubTab('members',this)"><span class="st-icon">👥</span>명단</button>
+      <button class="sub-tab-btn" onclick="showSubTab('destination',this)"><span class="st-icon">📍</span>지역·교회</button>
+      <button class="sub-tab-btn" onclick="showSubTab('flight',this)"><span class="st-icon">✈️</span>항공</button>
+      <button class="sub-tab-btn" onclick="showSubTab('hotel',this)"><span class="st-icon">🏨</span>숙소</button>
+      <button class="sub-tab-btn" onclick="showSubTab('checklist',this)"><span class="st-icon">✅</span>준비물</button>
+      <button class="sub-tab-btn" onclick="showSubTab('phrase',this)"><span class="st-icon">🗣️</span>회화</button>
+      <button class="sub-tab-btn" onclick="showSubTab('exchange',this)"><span class="st-icon">💱</span>환율</button>
+      <button class="sub-tab-btn" onclick="showSubTab('prayer',this)"><span class="st-icon">🙏</span>기도</button>
+    </div>
+  </div>
+
+  <!-- DAY 1 -->
+  <div class="tab-content active" id="tab-day1">
+    <div class="sec-ey">DAY 1 · 2026. 7. 31 (금)</div>
+    <div class="sec-t">출발의 날</div>
+    <div class="sch-item"><span class="sch-time">출발</span><span class="sch-dot"></span><div><div class="sch-title">✈️ 인천공항 집결 및 출발</div><div class="sch-sub">공항 집결 · 출국 수속 · 탑승</div></div></div>
+    <div class="sch-item"><span class="sch-time">이동</span><span class="sch-dot"></span><div><div class="sch-title">🛬 필리핀 현지 도착</div><div class="sch-sub">입국 심사 · 픽업 · 숙소 이동</div></div></div>
+    <div class="sch-item"><span class="sch-time">저녁</span><span class="sch-dot"></span><div><div class="sch-title">🙏 팀 오리엔테이션 & 기도회</div><div class="sch-sub">선교 비전 공유 · 팀 연합 예배</div></div></div>
+    <div class="note-box">✏️ 세부 시간표는 항공편 확정 후 업데이트됩니다.</div>
+  </div>
+
+  <!-- DAY 2 -->
+  <div class="tab-content" id="tab-day2">
+    <div class="sec-ey">DAY 2 · 2026. 8. 1 (토)</div>
+    <div class="sec-t">사역 첫째 날</div>
+    <div class="sch-item"><span class="sch-time">06:00</span><span class="sch-dot"></span><div><div class="sch-title">🕊️ 새벽 기도</div><div class="sch-sub">개인 경건의 시간</div></div></div>
+    <div class="sch-item"><span class="sch-time">09:00</span><span class="sch-dot"></span><div><div class="sch-title">🏫 영어마을 교육 사역 1일차</div><div class="sch-sub">현지 어린이 영어 교육 · 문화 교류</div></div></div>
+    <div class="sch-item"><span class="sch-time">13:00</span><span class="sch-dot"></span><div><div class="sch-title">🍱 점심 식사</div><div class="sch-sub">현지 음식 체험</div></div></div>
+    <div class="sch-item"><span class="sch-time">14:00</span><span class="sch-dot"></span><div><div class="sch-title">📖 오후 사역</div><div class="sch-sub">청소년 대상 프로그램 · 워십</div></div></div>
+    <div class="sch-item"><span class="sch-time">19:00</span><span class="sch-dot"></span><div><div class="sch-title">🌟 저녁 전도 집회</div><div class="sch-sub">현지 교회 협력 전도 집회</div></div></div>
+    <div class="note-box">✏️ 세부 시간표 확정 후 업데이트됩니다.</div>
+  </div>
+
+  <!-- DAY 3 -->
+  <div class="tab-content" id="tab-day3">
+    <div class="sec-ey">DAY 3 · 2026. 8. 2 (일)</div>
+    <div class="sec-t">사역 둘째 날</div>
+    <div class="sch-item"><span class="sch-time">06:00</span><span class="sch-dot"></span><div><div class="sch-title">🕊️ 새벽 기도</div><div class="sch-sub">팀 합심 기도</div></div></div>
+    <div class="sch-item"><span class="sch-time">09:00</span><span class="sch-dot"></span><div><div class="sch-title">🏫 영어마을 교육 사역 2일차</div><div class="sch-sub">심화 영어 프로그램 · 공연 준비</div></div></div>
+    <div class="sch-item"><span class="sch-time">14:00</span><span class="sch-dot"></span><div><div class="sch-title">🤝 사역지 방문 & 노방전도</div><div class="sch-sub">현지 거리 전도 · 봉사 활동</div></div></div>
+    <div class="sch-item"><span class="sch-time">19:00</span><span class="sch-dot"></span><div><div class="sch-title">🙏 중간 점검 기도회</div><div class="sch-sub">사역 나눔 · 감사 예배</div></div></div>
+    <div class="note-box">✏️ 세부 시간표 확정 후 업데이트됩니다.</div>
+  </div>
+
+  <!-- DAY 4 -->
+  <div class="tab-content" id="tab-day4">
+    <div class="sec-ey">DAY 4 · 2026. 8. 3 (월)</div>
+    <div class="sec-t">사역 셋째 날</div>
+    <div class="sch-item"><span class="sch-time">06:00</span><span class="sch-dot"></span><div><div class="sch-title">🕊️ 새벽 기도</div><div class="sch-sub">개인 경건의 시간</div></div></div>
+    <div class="sch-item"><span class="sch-time">09:00</span><span class="sch-dot"></span><div><div class="sch-title">🎉 영어마을 수료 행사</div><div class="sch-sub">수료증 시상 · 공연 · 선물 전달</div></div></div>
+    <div class="sch-item"><span class="sch-time">14:00</span><span class="sch-dot"></span><div><div class="sch-title">🤝 현지 교회 성도 교제</div><div class="sch-sub">협력 교회 방문 · 나눔의 시간</div></div></div>
+    <div class="sch-item"><span class="sch-time">19:00</span><span class="sch-dot"></span><div><div class="sch-title">🙏 마지막 밤 감사 예배</div><div class="sch-sub">선교 결산 예배 · 귀국 준비</div></div></div>
+    <div class="note-box">✏️ 세부 시간표 확정 후 업데이트됩니다.</div>
+  </div>
+
+  <!-- DAY 5 -->
+  <div class="tab-content" id="tab-day5">
+    <div class="sec-ey">DAY 5 · 2026. 8. 4 (화)</div>
+    <div class="sec-t">귀국의 날</div>
+    <div class="sch-item"><span class="sch-time">오전</span><span class="sch-dot"></span><div><div class="sch-title">🧳 체크아웃 & 공항 이동</div><div class="sch-sub">짐 정리 · 공항 이동</div></div></div>
+    <div class="sch-item"><span class="sch-time">귀국</span><span class="sch-dot"></span><div><div class="sch-title">✈️ 귀국 비행</div><div class="sch-sub">필리핀 출국 → 인천공항 도착</div></div></div>
+    <div class="sch-item"><span class="sch-time">도착</span><span class="sch-dot"></span><div><div class="sch-title">🏠 귀국 해산</div><div class="sch-sub">인천공항 해산 · 안전 귀가</div></div></div>
+  </div>
+
+  <!-- 목적 -->
+  <div class="tab-content" id="tab-purpose">
+    <div class="sec-ey">Why We Go</div>
+    <div class="sec-t">우리가 가는 이유</div>
+    <div class="purpose-hero">
+      <div class="purpose-verse">"그가 하나님의 나라를 전파하며 주 예수 그리스도에 관한 모든 것을<br>담대하게 거침없이 가르치더라"</div>
+      <div class="purpose-ref">사도행전 28:31 · Acts 28:31</div>
+    </div>
+    <div class="purpose-item"><span class="pi-icon">📖</span><div><div class="pi-title">복음 전파</div><div class="pi-desc">필리핀 현지 교회와 협력하여 예수 그리스도의 복음을 담대하게 전합니다. 노방전도와 집회를 통해 많은 영혼이 주께 돌아오도록 사역합니다.</div></div></div>
+    <div class="purpose-item"><span class="pi-icon">🏫</span><div><div class="pi-title">영어 교육 사역</div><div class="pi-desc">미라클 영어마을의 교육 역량을 선교에 활용합니다. 현지 어린이와 청소년에게 영어를 가르치며 하나님의 사랑을 전달합니다.</div></div></div>
+    <div class="purpose-item"><span class="pi-icon">🌱</span><div><div class="pi-title">다음 세대 양육</div><div class="pi-desc">교사와 학생이 함께 선교 현장을 경험함으로써 하나님 나라의 비전을 품고, 선교적 삶을 살아가는 다음 세대를 세웁니다.</div></div></div>
+    <div class="purpose-item"><span class="pi-icon">🤝</span><div><div class="pi-title">교회 연합</div><div class="pi-desc">현지 협력 교회와 지속적인 선교 관계를 형성하고, 한국 교회와 필리핀 교회가 하나 되어 하나님 나라를 확장합니다.</div></div></div>
+    <div class="purpose-item"><span class="pi-icon">🙏</span><div><div class="pi-title">거침없는 선교</div><div class="pi-desc">"Boldly and without hindrance" — 두려움 없이, 막힘 없이 하나님의 말씀을 전하는 선교팀이 되기를 소망합니다.</div></div></div>
+  </div>
+
+  <!-- 명단 -->
+  <div class="tab-content" id="tab-members">
+    <div class="sec-ey">Team Members</div>
+    <div class="sec-t">선교 명단</div>
+    <div class="member-group">
+      <div class="group-title">👨‍🏫 교사 · 인솔자</div>
+      <div class="member-grid">
+        <div class="member-card"><div class="member-name">교사 1</div><div class="member-role">인솔 교사</div><div class="member-note">팀 리더</div></div>
+        <div class="member-card"><div class="member-name">교사 2</div><div class="member-role">영어 교사</div></div>
+        <div class="member-card"><div class="member-name">교사 3</div><div class="member-role">영어 교사</div></div>
+      </div>
+    </div>
+    <div class="member-group">
+      <div class="group-title">👨‍👩‍👧 참가 학생</div>
+      <div class="member-grid">
+        <div class="member-card"><div class="member-name">학생 1</div><div class="member-role">영어마을 학생</div></div>
+        <div class="member-card"><div class="member-name">학생 2</div><div class="member-role">영어마을 학생</div></div>
+        <div class="member-card"><div class="member-name">학생 3</div><div class="member-role">영어마을 학생</div></div>
+        <div class="member-card"><div class="member-name">학생 4</div><div class="member-role">영어마을 학생</div></div>
+      </div>
+    </div>
+    <div class="note-box">✏️ 명단 확정 후 업데이트됩니다. 인원 정보를 알려주시면 바로 반영해드릴게요!</div>
+  </div>
+
+  <!-- 지역·교회 -->
+  <div class="tab-content" id="tab-destination">
+    <div class="sec-ey">Destination</div>
+    <div class="sec-t">가는 지역 & 교회</div>
+    <div class="dest-card"><div class="dest-img-ph">🌴</div><div class="dest-body"><div class="dest-name">선교지 지역</div><div class="dest-desc">선교지 확정 후 지역 소개, 지도, 교통 안내가 업데이트됩니다.</div><span class="dest-tag">확정 후 업데이트</span></div></div>
+    <div class="dest-card"><div class="dest-img-ph">⛪</div><div class="dest-body"><div class="dest-name">협력 교회</div><div class="dest-desc">방문할 현지 교회 이름, 담당 선교사, 연락처 정보가 안내됩니다.</div><span class="dest-tag">확정 후 업데이트</span></div></div>
+    <div class="note-box">✏️ 선교지 지역 및 방문 교회 정보를 알려주시면 상세히 안내해드릴게요!</div>
+  </div>
+
+  <!-- 항공 -->
+  <div class="tab-content" id="tab-flight">
+    <div class="sec-ey">Flight Info</div><div class="sec-t">항공 정보</div>
+    <div class="info-card">
+      <div class="info-card-title">✈️ 출발편 (7월 31일)</div>
+      <div class="info-row-line"><span class="info-key">항공사</span><span class="info-val"><span class="tbd">확정 대기</span></span></div>
+      <div class="info-row-line"><span class="info-key">출발</span><span class="info-val">인천국제공항 (ICN)</span></div>
+      <div class="info-row-line"><span class="info-key">출발 시각</span><span class="info-val"><span class="tbd">확정 대기</span></span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">🛬 귀국편 (8월 4일)</div>
+      <div class="info-row-line"><span class="info-key">항공사</span><span class="info-val"><span class="tbd">확정 대기</span></span></div>
+      <div class="info-row-line"><span class="info-key">도착</span><span class="info-val">인천국제공항 (ICN)</span></div>
+    </div>
+    <div class="note-box">✏️ 항공편 정보를 알려주시면 바로 업데이트해드릴게요.</div>
+  </div>
+
+  <!-- 숙소 -->
+  <div class="tab-content" id="tab-hotel">
+    <div class="sec-ey">Accommodation</div><div class="sec-t">숙소 정보</div>
+    <div class="info-card">
+      <div class="info-card-title">🏨 숙소</div>
+      <div class="info-row-line"><span class="info-key">숙소명</span><span class="info-val"><span class="tbd">확정 대기</span></span></div>
+      <div class="info-row-line"><span class="info-key">체크인</span><span class="info-val">2026. 7. 31</span></div>
+      <div class="info-row-line"><span class="info-key">체크아웃</span><span class="info-val">2026. 8. 4</span></div>
+      <div class="info-row-line"><span class="info-key">주소</span><span class="info-val"><span class="tbd">확정 대기</span></span></div>
+    </div>
+    <div class="note-box">✏️ 숙소 정보를 알려주시면 지도 링크와 함께 업데이트해드릴게요!</div>
+  </div>
+
+  <!-- 준비물 -->
+  <div class="tab-content" id="tab-checklist">
+    <div class="sec-ey">Packing List</div><div class="sec-t">준비물 체크리스트</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-txt" id="progressTxt">0 / 0 완료</div>
+    <div class="check-sec-title">📋 필수 서류</div>
+    <ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">여권 (유효기간 6개월 이상)</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">항공권 e-티켓 출력</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">여행자 보험 증서</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">비상 연락처 카드</span></li>
+    </ul>
+    <div class="check-sec-title">💰 금전 & 통신</div>
+    <ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">환전 (필리핀 페소 PHP)</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">신용카드 (해외 사용 확인)</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">로밍 또는 현지 유심</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">보조 배터리</span></li>
+    </ul>
+    <div class="check-sec-title">👕 선교 물품</div>
+    <ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">선교 단체 티셔츠 / 유니폼</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">성경 (영어 포함)</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">찬양 악보 / 악기</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">어린이 선물 (사탕, 학용품 등)</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">전도지 / 소책자</span></li>
+    </ul>
+    <div class="check-sec-title">💊 건강 & 위생</div>
+    <ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">소화제, 설사약, 두통약</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">모기 기피제 (필수!)</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">자외선 차단제 SPF50+</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">손 소독제 / 물티슈</span></li>
+      <li class="check-item" onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-txt">개인 상비약</span></li>
+    </ul>
+  </div>
+
+  <!-- 회화 -->
+  <div class="tab-content" id="tab-phrase">
+    <div class="sec-ey">Language Guide</div><div class="sec-t">회화 & 전도 표현</div>
+    <div class="phrase-tabs">
+      <button class="ptab active" onclick="showPhrase('tagalog',this)">🇵🇭 따갈로그어</button>
+      <button class="ptab" onclick="showPhrase('english',this)">🇺🇸 영어 회화</button>
+      <button class="ptab" onclick="showPhrase('gospel',this)">✝️ 노방전도</button>
+    </div>
+    <div class="phrase-panel active" id="pp-tagalog">
+      <div class="phrase-cat-title">기본 인사</div>
+      <div class="phrase-item"><div class="phrase-ko">안녕하세요</div><div class="phrase-foreign">Magandang araw!</div><div class="phrase-pron">마간당 아라우!</div></div>
+      <div class="phrase-item"><div class="phrase-ko">감사합니다</div><div class="phrase-foreign">Salamat!</div><div class="phrase-pron">살라맛!</div></div>
+      <div class="phrase-item"><div class="phrase-ko">죄송합니다</div><div class="phrase-foreign">Pasensya na.</div><div class="phrase-pron">파센샤 나.</div></div>
+      <div class="phrase-item"><div class="phrase-ko">이름이 뭐예요?</div><div class="phrase-foreign">Ano ang pangalan mo?</div><div class="phrase-pron">아노 앙 팡알란 모?</div></div>
+      <div class="phrase-item"><div class="phrase-ko">저는 한국에서 왔어요</div><div class="phrase-foreign">Ako ay mula sa Korea.</div><div class="phrase-pron">아코 아이 물라 사 코레아.</div></div>
+      <div class="phrase-item"><div class="phrase-ko">네 / 아니요</div><div class="phrase-foreign">Oo / Hindi</div><div class="phrase-pron">오오 / 힌디</div></div>
+      <div class="phrase-cat-title">생활 표현</div>
+      <div class="phrase-item"><div class="phrase-ko">얼마예요?</div><div class="phrase-foreign">Magkano ito?</div><div class="phrase-pron">막카노 이토?</div></div>
+      <div class="phrase-item"><div class="phrase-ko">맛있어요!</div><div class="phrase-foreign">Masarap!</div><div class="phrase-pron">마사랍!</div></div>
+      <div class="phrase-item"><div class="phrase-ko">도와주세요</div><div class="phrase-foreign">Tulungan mo ako.</div><div class="phrase-pron">툴룽안 모 아코.</div></div>
+    </div>
+    <div class="phrase-panel" id="pp-english">
+      <div class="phrase-cat-title">교육 현장</div>
+      <div class="phrase-item"><div class="phrase-ko">수업 시작해요</div><div class="phrase-foreign">Let's begin our class!</div><div class="phrase-pron">렛츠 비긴 아워 클래스!</div></div>
+      <div class="phrase-item"><div class="phrase-ko">잘했어요!</div><div class="phrase-foreign">Great job! / Well done!</div><div class="phrase-pron">그레이트 잡! / 웰 던!</div></div>
+      <div class="phrase-item"><div class="phrase-ko">따라 말해봐요</div><div class="phrase-foreign">Repeat after me.</div><div class="phrase-pron">리핏 애프터 미.</div></div>
+      <div class="phrase-item"><div class="phrase-ko">이해했나요?</div><div class="phrase-foreign">Do you understand?</div><div class="phrase-pron">두 유 언더스탠드?</div></div>
+      <div class="phrase-cat-title">일상 대화</div>
+      <div class="phrase-item"><div class="phrase-ko">이름이 뭐예요?</div><div class="phrase-foreign">What's your name?</div><div class="phrase-pron">왓츠 유어 네임?</div></div>
+      <div class="phrase-item"><div class="phrase-ko">친구가 되어요!</div><div class="phrase-foreign">Let's be friends!</div><div class="phrase-pron">렛츠 비 프렌즈!</div></div>
+      <div class="phrase-item"><div class="phrase-ko">또 만나요!</div><div class="phrase-foreign">See you again!</div><div class="phrase-pron">씨 유 어게인!</div></div>
+    </div>
+    <div class="phrase-panel" id="pp-gospel">
+      <div class="phrase-cat-title">영어 전도 표현</div>
+      <div class="phrase-item"><div class="phrase-ko">잠깐 시간 있으세요?</div><div class="phrase-foreign">Do you have a moment?</div><div class="phrase-pron">두 유 해브 어 모멘트?</div></div>
+      <div class="phrase-item"><div class="phrase-ko">하나님은 당신을 사랑하세요</div><div class="phrase-foreign">God loves you.</div><div class="phrase-pron">갓 러브스 유.</div></div>
+      <div class="phrase-item"><div class="phrase-ko">예수님을 믿으세요?</div><div class="phrase-foreign">Do you believe in Jesus?</div><div class="phrase-pron">두 유 빌리브 인 지저스?</div></div>
+      <div class="phrase-item"><div class="phrase-ko">예수님은 당신의 죄를 위해 죽으셨어요</div><div class="phrase-foreign">Jesus died for your sins.</div><div class="phrase-pron">지저스 다이드 포 유어 신즈.</div></div>
+      <div class="phrase-item"><div class="phrase-ko">예수님이 당신의 구원자가 되길 원하세요?</div><div class="phrase-foreign">Would you like Jesus to be your Savior?</div><div class="phrase-pron">우드 유 라이크 지저스 투 비 유어 세이비어?</div></div>
+      <div class="phrase-item"><div class="phrase-ko">교회에 오세요!</div><div class="phrase-foreign">Please come to our church!</div><div class="phrase-pron">플리즈 컴 투 아워 처치!</div></div>
+      <div class="phrase-cat-title">따갈로그어 전도 표현</div>
+      <div class="phrase-item"><div class="phrase-ko">하나님은 당신을 사랑하세요</div><div class="phrase-foreign">Mahal kayo ng Diyos.</div><div class="phrase-pron">마할 카요 낭 디요스.</div></div>
+      <div class="phrase-item"><div class="phrase-ko">예수님을 믿으세요?</div><div class="phrase-foreign">Naniniwala ka ba kay Hesus?</div><div class="phrase-pron">나니니왈라 카 바 카이 헤수스?</div></div>
+      <div class="phrase-item"><div class="phrase-ko">예수님은 길이요 진리요 생명이에요</div><div class="phrase-foreign">Si Hesus ang daan, katotohanan, at buhay.</div><div class="phrase-pron">씨 헤수스 앙 다안, 카토토하난, 앗 부하이.</div></div>
+      <div class="phrase-item"><div class="phrase-ko">우리 교회에 오세요!</div><div class="phrase-foreign">Pumunta ka sa aming simbahan!</div><div class="phrase-pron">푸문타 카 사 아밍 심바한!</div></div>
+    </div>
+  </div>
+
+  <!-- 환율 -->
+  <div class="tab-content" id="tab-exchange">
+    <div class="sec-ey">Currency Exchange</div><div class="sec-t">환율 계산기</div>
+    <div class="fx-card">
+      <div class="fx-rate-box">
+        <div class="fx-rate-num">1 PHP = <span id="fxRate">--</span> 원</div>
+        <div class="fx-rate-sub" id="fxSub">환율 로딩 중...</div>
+      </div>
+      <div class="fx-dir">🇰🇷 원화 → 🇵🇭 페소</div>
+      <input class="fx-input" type="number" id="krwIn" placeholder="원화 금액 입력" oninput="calcK2P()">
+      <div class="fx-arrow">↓</div>
+      <div class="fx-result"><div class="fx-result-num" id="phpOut">-- PHP</div><div class="fx-result-lbl">필리핀 페소</div></div>
+      <br>
+      <div class="fx-dir">🇵🇭 페소 → 🇰🇷 원화</div>
+      <input class="fx-input" type="number" id="phpIn" placeholder="페소 금액 입력" oninput="calcP2K()">
+      <div class="fx-arrow">↓</div>
+      <div class="fx-result"><div class="fx-result-num" id="krwOut">-- 원</div><div class="fx-result-lbl">한국 원화</div></div>
+      <br>
+      <div class="fx-quick">
+        <button class="fx-q-btn" onclick="qCalc(10000)">1만원</button>
+        <button class="fx-q-btn" onclick="qCalc(30000)">3만원</button>
+        <button class="fx-q-btn" onclick="qCalc(50000)">5만원</button>
+        <button class="fx-q-btn" onclick="qCalc(100000)">10만원</button>
+        <button class="fx-q-btn" onclick="qCalc(300000)">30만원</button>
+      </div>
+      <div class="fx-note" id="fxNote">실시간 환율 로딩 중...</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">💡 환전 팁</div>
+      <div class="info-row-line"><span class="info-key">추천 환전</span><span class="info-val gold">공항 환전소</span></div>
+      <div class="info-row-line"><span class="info-key">현지 ATM</span><span class="info-val">시내 은행 ATM 이용 가능</span></div>
+      <div class="info-row-line"><span class="info-key">주의사항</span><span class="info-val">암환전 절대 금지</span></div>
+      <div class="info-row-line"><span class="info-key">권장 환전액</span><span class="info-val gold">1인 20~30만원</span></div>
+    </div>
+  </div>
+
+  <!-- 기도 -->
+  <div class="tab-content" id="tab-prayer">
+    <div class="sec-ey">Prayer</div><div class="sec-t">기도 제목</div>
+    <div class="prayer-card">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:rgba(255,255,255,0.88);line-height:1.7;margin-bottom:10px;">"그가 하나님의 나라를 전파하며 주 예수 그리스도에 관한<br>모든 것을 담대하게 거침없이 가르치더라"</div>
+      <div style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--gold);">사도행전 28:31</div>
+    </div>
+    <div class="prayer-item"><div class="pr-num">01</div><div class="pr-text">선교팀 모든 교사와 학생들의 건강과 안전 — 이동과 사역 중 하나님의 보호하심</div></div>
+    <div class="prayer-item"><div class="pr-num">02</div><div class="pr-text">영어 교육 사역을 통해 하나님의 사랑이 현지 어린이들에게 전달되도록</div></div>
+    <div class="prayer-item"><div class="pr-num">03</div><div class="pr-text">노방전도와 집회 때 성령께서 강하게 역사하시고 많은 영혼이 주께 돌아오도록</div></div>
+    <div class="prayer-item"><div class="pr-num">04</div><div class="pr-text">협력 교회와의 연합이 이루어지고 지속적인 선교 관계가 형성되도록</div></div>
+    <div class="prayer-item"><div class="pr-num">05</div><div class="pr-text">선교를 후원하고 기도하는 학부모님들과 교회 성도들을 하나님께서 풍성히 축복하시도록</div></div>
+    <div class="prayer-item"><div class="pr-num">06</div><div class="pr-text">귀국 후 선교의 열매와 비전이 지속되어 미라클 영어마을의 선교적 사명이 더욱 깊어지도록</div></div>
+  </div>
+
+  <div class="detail-footer">
+    <p><strong>2026 미라클 영어마을 필리핀 선교</strong></p>
+    <p style="margin-top:4px;">7월 31일 — 8월 4일 · Boldly and without hindrance</p>
+  </div>
+</div>
+
+<script>
+/* ═══ D-DAY ═══ */
+function tick(){
+  const t=new Date('2026-07-31T00:00:00+09:00'),n=new Date(),diff=t-n;
+  if(diff<=0){document.getElementById('ddayNum').textContent='0';return;}
+  const d=Math.floor(diff/86400000);
+  document.getElementById('ddayNum').textContent=d;
+  document.getElementById('cntD').textContent=String(d).padStart(2,'0');
+  document.getElementById('cntH').textContent=String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cntM').textContent=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cntS').textContent=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+}
+tick(); setInterval(tick,1000);
+
+/* ═══ 페이지 전환 ═══ */
+function gotoDetail(){
+  document.getElementById('mainPage').style.display='none';
+  document.getElementById('detailPage').style.display='block';
+  window.scrollTo(0,0);
+}
+function goBack(){
+  document.getElementById('detailPage').style.display='none';
+  document.getElementById('mainPage').style.display='block';
+  window.scrollTo(0,0);
+}
+
+/* ═══ 탭 전환 ═══ */
+// DAY 탭 (1행)
+function showDayTab(id, el){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.day-tab-btn').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.sub-tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+// 서브 탭 (2행)
+function showSubTab(id, el){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.day-tab-btn').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.sub-tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+  el.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function showPhrase(id,el){
+  document.querySelectorAll('.phrase-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('pp-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+/* ═══ 준비물 ═══ */
+function toggleCheck(el){
+  el.classList.toggle('done');
+  const b=el.querySelector('.check-box');
+  b.classList.toggle('on',el.classList.contains('done'));
+  b.textContent=el.classList.contains('done')?'✓':'';
+  const all=document.querySelectorAll('.check-item').length;
+  const done=document.querySelectorAll('.check-item.done').length;
+  document.getElementById('progressFill').style.width=(done/all*100)+'%';
+  document.getElementById('progressTxt').textContent=done+' / '+all+' 완료';
+}
+(()=>{const n=document.querySelectorAll('.check-item').length;document.getElementById('progressTxt').textContent='0 / '+n+' 완료';})();
+
+/* ═══ 환율 ═══ */
+let rate=25.5;
+async function loadRate(){
+  try{
+    const r=await fetch('https://open.er-api.com/v6/latest/PHP');
+    const d=await r.json();
+    if(d.rates&&d.rates.KRW){
+      rate=d.rates.KRW;
+      document.getElementById('fxRate').textContent=Math.round(rate).toLocaleString();
+      document.getElementById('fxSub').textContent='1 PHP ≈ '+rate.toFixed(1)+'원';
+      const t=new Date();
+      document.getElementById('fxNote').textContent='✅ 실시간 반영 · '+t.getHours()+':'+String(t.getMinutes()).padStart(2,'0')+' 기준';
+    }
+  }catch(e){document.getElementById('fxNote').textContent='⚠️ 참고용 환율 (네트워크 확인)';}
+}
+function calcK2P(){const v=parseFloat(document.getElementById('krwIn').value)||0;document.getElementById('phpOut').textContent=v>0?(v/rate).toFixed(0)+' PHP':'-- PHP';}
+function calcP2K(){const v=parseFloat(document.getElementById('phpIn').value)||0;document.getElementById('krwOut').textContent=v>0?Math.round(v*rate).toLocaleString()+'원':'-- 원';}
+function qCalc(w){document.getElementById('krwIn').value=w;calcK2P();}
+loadRate();
+
+/* ═══ 날씨 ═══ */
+const WI=c=>c<=1?'☀️':c<=3?'🌤':c<=48?'⛅':c<=67?'🌧':c<=77?'🌨':'⛈';
+const WN=['일','월','화','수','목','금','토'];
+
+async function loadCityWeather(lat,lon,iconId,tempId){
+  try{
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&timezone=auto`);
+    const d=await r.json();
+    if(d.current){
+      document.getElementById(iconId).textContent=WI(d.current.weathercode);
+      document.getElementById(tempId).textContent=Math.round(d.current.temperature_2m)+'°';
+    }
+  }catch(e){}
+}
+
+async function loadWeekForecast(lat,lon){
+  try{
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Asia%2FManila&forecast_days=7`);
+    const d=await r.json();
+    if(d.daily){
+      const days=d.daily;
+      const wrap=document.getElementById('wpWeek');
+      wrap.innerHTML='';
+      for(let i=0;i<7;i++){
+        const dt=new Date(days.time[i]);
+        const div=document.createElement('div');
+        div.className='wp-day';
+        div.innerHTML=`<span class="wp-day-name">${WN[dt.getDay()]}</span><span class="wp-day-icon">${WI(days.weathercode[i])}</span><span class="wp-day-hi">${Math.round(days.temperature_2m_max[i])}°</span><span class="wp-day-lo">${Math.round(days.temperature_2m_min[i])}°</span>`;
+        wrap.appendChild(div);
+      }
+    }
+  }catch(e){}
+}
+
+// 마닐라 (선교지 대표 & 7일 예보)
+loadCityWeather(14.5995,120.9842,'wci1','wct1');
+loadCityWeather(14.5995,120.9842,'wci2','wct2');
+loadCityWeather(37.5665,126.9780,'wci3','wct3');
+loadWeekForecast(14.5995,120.9842);
+setInterval(()=>{
+  loadCityWeather(14.5995,120.9842,'wci1','wct1');
+  loadCityWeather(14.5995,120.9842,'wci2','wct2');
+  loadCityWeather(37.5665,126.9780,'wci3','wct3');
+  loadWeekForecast(14.5995,120.9842);
+},600000);
+</script>
+</body>
+</html>
